@@ -1,0 +1,59 @@
+1、
+javascript中绑定带参数的事件响应函数
+http://blog.csdn.net/chummyhe89/article/details/7625853
+
+//增加EventHandler，
+        function addEventHandler(oNode, sEvt, fFunc, bCapture)
+        {
+
+            //if (typeof (window.event) != "undefined")
+            //    oNode.attachEvent("on" + sEvt, fFunc);
+            //    
+            //else
+                oNode.addEventListener(sEvt, fFunc, bCapture);
+        }
+
+        //刪除EventHandler，
+        function removeEventHandler(oNode, sEvt, fFunc, bCapture)
+        {
+
+            //if (typeof (window.event) != "undefined")
+            //   //oNode.detachEvent("on" + sEvt, fFunc);
+            //else
+                oNode.removeEventListener(sEvt, fFunc, bCapture);
+        }
+
+        //為了能夠添加事件，對函數處理使得能夠傳遞參數
+        function bind(obj, handler)
+        {
+            obj = obj || window;
+            var args = [];
+            for (var i = 2; i < arguments.length; i++)
+            {
+                args.push(arguments[i]);
+            }
+            return function () { handler.apply(obj, args) };
+        };
+
+        //為所有文本框綁定keyup事件
+        function SetOnKeyUp()
+        {
+            __handleDic = new Array();
+            var inputs = document.getElementsByTagName("input");//取所有文本框
+            for (var i = 0; i < inputs.length; i++)
+            {
+                //if (inputs[i].getAttribute("isEasyInput") == null) continue;//只有有此屬性的文本框才掛上
+                //inputs[i].onclick = function() { alert('Hello!World'); };
+
+                //inputs[i].onkeyup = function () { test(el); }; //可行，但是參數有問題
+                var mothe = bind(inputs[i], DomKeyUpEvent, inputs[i]);
+                addEventHandler(inputs[i], "keyup", mothe);//優先級是DOM本身的事件才到這些綁定的事件
+                // addEventHandler(inputs[i], "keyup", function (d) { test(d+1); }, false);
+                // addEventHandler(inputs[i], "keyup", function (d) { test(d+2); }, false);
+
+                __handleDic[inputs[i].id] = mothe;
+            }
+        }
+
+
+
